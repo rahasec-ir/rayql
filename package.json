@@ -1,0 +1,37 @@
+{
+  "name": "rayql",
+  "version": "1.0.0",
+  "description": "rayql query language",
+  "main": "query.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:rahasec-ir/rayql.git"
+  },
+  "author": "alireza-ebrahimi",
+  "license": "Apache 2.0",
+  "dependencies": {
+    "@elastic/elasticsearch": "^7.2.0",
+    "console.table": "^0.10.0",
+    "flat": "^5.0.0",
+    "inquirer": "^7.0.4",
+    "inquirer-autocomplete-prompt": "^1.0.1",
+    "jest": "^24.9.0",
+    "jison": "^0.4.18",
+    "string-format": "^2.0.0",
+    "vorpal": "^1.12.0",
+    "yargs": "^14.0.0"
+  },
+  "directories": {
+    "example": "examples"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "elasticsearch",
+    "query",
+    "language",
+    "jison"
+  ]
+}

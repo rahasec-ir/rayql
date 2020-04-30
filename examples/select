@@ -1,0 +1,25 @@
+  search source_name = "Microsoft-Windows-Security-Auditing" and event_id = 4625 select event_id,source_name
+
+  search  [event_id > 0 and event_id < 4] select src_ip_addr, @timestamp
+aggregate terms event_id
+expand terms process_guid.keyword, terms host_name.keyword
+
+
+match 
+Process[id = 12] -child- Process[name = 'cmd'] -parent-> Process:pp[name = 'pp'], 
+Process:p[id = 122] <-child- Log:l[name = 'power'],
+:p -run_by-> :pp 
+
+match [id = 12] -child- Process[name in ["cmd", "psg"]] -parent-> Process:pp[name = "pp"]
+
+  search [source_name = 'Microsoft-Windows-Security-Auditing' and event_id = 4625] 
+  select event_id,source_name
+  aggregate terms by event_id a=2 b='sdfa'
+  aggregate terms by source_name
+  aggregate terms by name
+
+sequence in 10 min 
+[source_name = 'Microsoft-Windows-Security-Auditing' and event_id = 4625] by event_id
+[command_line = 'cmd.exe'] by date
+
+search [source_name = 'Microsoft-Windows-Security-Auditing' and event_id = 4625] select event_id,source_name aggregate terms by event_id a=2 b='sdfa' aggregate terms by source_name aggregate terms by name

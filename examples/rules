@@ -1,0 +1,3 @@
+ detect_CMSTP: search [{process_create} and {parent_is_shell_program} and process_name = 'cmstp.exe' and process_command_line.keyword = '*inf']
+ detect_Indicator_removal: search [event_id = 1102]
+ detect_Indicator_removal: search [{process_create} and file_name_original = 'wevtutil.exe' and process_command_line = 'cl' and process_command_line = '*wevtutil*']

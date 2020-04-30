@@ -1,0 +1,14 @@
+search source_name = "Microsoft-Windows-Security-Auditing" and event_id = 4625
+aggregate date_histogram by @timestamp interval 1h
+aggregate terms src_ip_addr  
+expand terms event_id  
+
+
+
+
+
+
+search source_name = "Microsoft-Windows-Security-Auditing" and event_id = 4625
+aggregate date_histogram by @timestamp interval 1h
+aggregate terms event_data.IpAddress  
+expand terms event_id, terms computer_name
