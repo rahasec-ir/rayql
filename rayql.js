@@ -670,43 +670,43 @@ case 4:return 10
 break;
 case 5:return 39
 break;
-case 6:return 40
+case 6:return 38
 break;
-case 7:return 38
+case 7:return 47
 break;
-case 8:return 47
+case 8:return 45
 break;
-case 9:return 45
+case 9:return 57
 break;
-case 10:return 57
+case 10:return 59
 break;
-case 11:return 59
+case 11:return 11
 break;
-case 12:return 11
+case 12:return 54
 break;
-case 13:return 54
+case 13:return 'filter'
 break;
-case 14:return 'filter'
+case 14:return 'primary'
 break;
-case 15:return 'primary'
+case 15:return 19
 break;
-case 16:return 19
+case 16:return 41
 break;
-case 17:return 41
+case 17:return 42
 break;
-case 18:return 42
+case 18:return 48
 break;
-case 19:return 48
+case 19:return 50
 break;
-case 20:return 50
+case 20:return 24
 break;
-case 21:return 24
+case 21:return '|'
 break;
-case 22:return '|'
+case 22:return 51
 break;
-case 23:return 51
+case 23:return 52
 break;
-case 24:return 52
+case 24:return 40
 break;
 case 25:return 29
 break;
@@ -736,7 +736,7 @@ case 37:return 'INVALID'
 break;
 }
 },
-rules: [/^(?:\s+)/,/^(?:[0-9]+(\.[0-9]+)?\b)/,/^(?:search\b)/,/^(?:match\b)/,/^(?:sequence\b)/,/^(?:and\b)/,/^(?:!)/,/^(?:or\b)/,/^(?:any\b)/,/^(?:all\b)/,/^(?:aggregate\b)/,/^(?:expand\b)/,/^(?:in\b)/,/^(?:select\b)/,/^(?:filter\b)/,/^(?:primary\b)/,/^(?:by\b)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:,)/,/^(?:\|)/,/^(?:=)/,/^(?:!=)/,/^(?:-)/,/^(?:>)/,/^(?:<)/,/^(?::)/,/^(?:,)/,/^(?:Log\b)/,/^(?:Process\b)/,/^(?:User\b)/,/^(?:('(\\.|[^'\\]|\*)*'))/,/^(?:([a-zA-Z\@][a-zA-Z0-9_\.]*))/,/^(?:([0-9]*[hymMdqy]))/,/^(?:$)/,/^(?:.)/],
+rules: [/^(?:\s+)/,/^(?:[0-9]+(\.[0-9]+)?\b)/,/^(?:search\b)/,/^(?:match\b)/,/^(?:sequence\b)/,/^(?:and\b)/,/^(?:or\b)/,/^(?:any\b)/,/^(?:all\b)/,/^(?:aggregate\b)/,/^(?:expand\b)/,/^(?:in\b)/,/^(?:select\b)/,/^(?:filter\b)/,/^(?:primary\b)/,/^(?:by\b)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:,)/,/^(?:\|)/,/^(?:=)/,/^(?:!=)/,/^(?:!)/,/^(?:-)/,/^(?:>)/,/^(?:<)/,/^(?::)/,/^(?:,)/,/^(?:Log\b)/,/^(?:Process\b)/,/^(?:User\b)/,/^(?:('(\\.|[^'\\]|\*)*'))/,/^(?:([a-zA-Z\@][a-zA-Z0-9_\.]*))/,/^(?:([0-9]*[hymMdqy]))/,/^(?:$)/,/^(?:.)/],
 conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37],"inclusive":true}}
 });
 return lexer;
