@@ -106,7 +106,7 @@ module.exports = {
             value,
         }
     },
-    search: (search, timeWindow, selectedFields, aggs, expands) => {
+    search: (search, timeWindow, selectedFields, aggs, expands, filter) => {
         // console.log('search', search, selectedFields, aggs, expands)
         if (selectedFields) {
             selectedFields = selectedFields.reverse()
@@ -115,6 +115,14 @@ module.exports = {
             aggs = aggs.reverse()
         }
 
+        if(filter) {
+			search.where = {
+				node: 'boolean',
+				operator: 'and',
+				value: [search.where, filter]
+			}
+		}
+        
         if(timeWindow) {
 			search.where = {
 				node: 'boolean',
@@ -127,7 +135,7 @@ module.exports = {
 				}]
 			}
 		}
-
+        
         let finalAst = {
             node: 'search',
             search, timeWindow, selectedFields, aggs, expands

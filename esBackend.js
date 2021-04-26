@@ -144,7 +144,7 @@ module.exports = {
 				return "unsupported";
 		}
 	},
-	createSearchRequest: async function (ast, orderby, config) {
+	createSearchRequest: function (ast, orderby, config) {
 		// console.log("search", util.inspect(ast.where, false, 15));
 
 		let req = {
@@ -166,7 +166,12 @@ module.exports = {
 			req.aggs = this.getAggregation(ast.aggs, 0, config);
 		}
 		console.log("search", util.inspect(req, false, 15));
+		return req
+	},
+	executeSearchRequest: async function (ast, orderby, config) {
+		// console.log("search", util.inspect(ast.where, false, 15));
 
+		let req = this.createSearchRequest(ast, orderby, config)
 		let result = await config.client.search({
 			body: req
 		});

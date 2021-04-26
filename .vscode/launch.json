@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch2",
-            "program": "${workspaceFolder}/cli.js"
+            "program": "${workspaceFolder}/sample2.js"
         },
         {
             "type": "node",

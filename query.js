@@ -30,15 +30,34 @@ function Rayql(config) {
 
 Rayql.prototype = {
     constructor: Rayql,
+    query: function (text, filter) {
+        this.text = format(text, this.config.savedSearches)
+        let ast = rayql.parse(this.text)
+        if (ast.node === 'search') {
+            console.log('searching', this.text)
+            if (filter) {
+                
+                ast = AST.search(ast.search, undefined, ast.selectedFields, ast.aggs, ast.expands, filter)
+            }
+            return es.createSearchRequest(ast, undefined, this)
+            // console.log(resp)
+        }
+    }, 
     exec: async function (text, optTimeWindow) {
         this.text = format(text, this.config.savedSearches)
         let ast = rayql.parse(this.text)
         if (ast.node === 'search') {
             console.log('searching', this.text)
             if (optTimeWindow) {
-                ast = AST.search(ast.search, optTimeWindow, ast.selectedFields, ast.aggs, ast.expands)
+                let filter = {
+					node: 'boolean',
+					field: '@timestamp',
+					operator: '>',
+					value: 'now-' + optTimeWindow.number + optTimeWindow.unit
+				}
+                ast = AST.search(ast.search, filter, ast.selectedFields, ast.aggs, ast.expands)
             }
-            let resp = await es.createSearchRequest(ast, undefined, this)
+            let resp = await es.executeSearchRequest(ast, undefined, this)
             return {
                 total: resp.body.hits.total,
                 hits: resp.body.hits.hits,
@@ -82,11 +101,11 @@ Rayql.prototype = {
                         //     states[record.key][record.sequence][i] = states[record.key][record.sequence - 1][i]
                         // }
                         delete states[record.key][record.sequence - 1]
-                        if(record.sequence == searches.length - 1) {
+                        if (record.sequence == searches.length - 1) {
                             console.log('seq', record.key, states[record.key])
                         }
                     }
-                    
+
                 }
             }
             console.log(states)
