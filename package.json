@@ -3,8 +3,10 @@
   "version": "1.1.1",
   "description": "rayql query language",
   "main": "query.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "jison": "npx jison rayql.yacc rayql.lex && sed -i \"s/return true/return yyval.\\$/g\" ./rayql.js && cp ./rayql.js ./dist/rayql.js"
   },
   "repository": {
     "type": "git",
@@ -14,6 +16,8 @@
   "license": "Apache 2.0",
   "dependencies": {
     "@elastic/elasticsearch": "^7.2.0",
+    "@types/elasticsearch": "^5.0.40",
+    "@types/node": "^17.0.26",
     "console.table": "^0.10.0",
     "flat": "^5.0.0",
     "inquirer": "^7.0.4",

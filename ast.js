@@ -78,6 +78,12 @@ module.exports = {
             value: expr
         }
     },
+    tag: (tags, where) => {
+        return {
+            where,
+            tags: tags.map(value => getRealLiteral(value)),
+        }
+    },
     all: (field, values) => {
         // console.log('all', field, values)
         return {
@@ -106,7 +112,7 @@ module.exports = {
             value,
         }
     },
-    search: (search, timeWindow, selectedFields, aggs, expands, filter) => {
+    search: (search, timeWindow, selectedFields, aggs, expands) => {
         // console.log('search', search, selectedFields, aggs, expands)
         if (selectedFields) {
             selectedFields = selectedFields.reverse()
@@ -115,14 +121,6 @@ module.exports = {
             aggs = aggs.reverse()
         }
 
-        if(filter) {
-			search.where = {
-				node: 'boolean',
-				operator: 'and',
-				value: [search.where, filter]
-			}
-		}
-        
         if(timeWindow) {
 			search.where = {
 				node: 'boolean',
@@ -184,14 +182,15 @@ module.exports = {
             ...object
         }
     },
-    sequence: (timeWindow, objectSelectedList) => {
+    sequence: (unordered, timeWindow, objectSelectedList) => {
 		console.log("timeWindow", util.inspect(timeWindow, false, 15));
         console.log("objectSelectedList", util.inspect(objectSelectedList, false, 15));
         objectSelectedList = objectSelectedList.reverse()
         return {
             node: 'sequence',
+            unordered: unordered === 'all' ? objectSelectedList.length : unordered,
             timeWindow,
-            objectSelectedList
+            steps: objectSelectedList,
         }
     },
     

@@ -7,8 +7,6 @@ const format = require('string-format')
 var flatten = require('flat')
 const { Client } = require("@elastic/elasticsearch");
 
-
-
 function Rayql(config) {
     if (!config) {
         config = {}
@@ -36,13 +34,46 @@ Rayql.prototype = {
         if (ast.node === 'search') {
             console.log('searching', this.text)
             if (filter) {
-                
-                ast = AST.search(ast.search, undefined, ast.selectedFields, ast.aggs, ast.expands, filter)
+                ast.search.where = {
+                    node: 'boolean',
+                    operator: 'and',
+                    value: [ast.search.where, filter]
+                }
             }
             return es.createSearchRequest(ast, undefined, this)
             // console.log(resp)
         }
     }, 
+    parse: function (text, filter) {
+        this.text = format(text, this.config.savedSearches)
+        let ast = rayql.parse(this.text)
+        if (ast.node === 'search') {
+            console.log('searching', this.text)
+            if (filter) {
+                ast.search.where = {
+                    node: 'boolean',
+                    operator: 'and',
+                    value: [ast.search.where, filter]
+                }
+            }
+            return ast
+        }
+        if (ast.node === 'sequence') {
+            if (filter) {
+                for (let step of ast.steps) {
+                    step.where = {
+                        node: 'boolean',
+                        operator: 'and',
+                        value: [step.where, filter]
+                    }
+                }
+            }
+        }
+        return ast
+    },
+    createSearchRequest: function (ast, order) {
+        return es.createSearchRequest(ast, order, this)
+    },
     exec: async function (text, optTimeWindow) {
         this.text = format(text, this.config.savedSearches)
         let ast = rayql.parse(this.text)
@@ -126,6 +157,12 @@ Rayql.prototype = {
             return this.config.mappings[fieldname]
         }
         return fieldname
+    },
+    tag: function (text) {
+        this.text = format(text, this.config.savedSearches)
+        let ast = rayql.parse(this.text)
+        let func = es.createTagFunction(ast, this)
+        console.log(func)
     }
 }
 

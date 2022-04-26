@@ -20,17 +20,29 @@ start :
     query EOF;
 
 query : 
-    search_query | match_query | sequence_query | join_query;
+    search_query | match_query | sequence_query | join_query | tag_query;
+
+tag_query:
+    'tag' literal_array 'where' where_part { $$ = AST.tag($2, $4) }
+    ;
 
 // sequence_query
 sequence_query:
-    'sequence' 'in' time_window object_selected_list { $$ = AST.sequence($3, $4) }
+    'sequence' optional_unordered 'in' time_window object_selected_list { $$ = AST.sequence($2, $4, $5) }
     ;
 
 optional_time_window:
     'in' time_window { $$ = $2 }
     |
 
+    ;
+
+optional_unordered:
+    'unordered' 'NUMBER' { $$ = $2 }
+    |
+    'unordered' { $$ = 'all' }
+    |
+      
     ;
 
 time_window:

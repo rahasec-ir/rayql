@@ -1,5 +1,4 @@
 var util = require("util");
-var fs = require("fs");
 
 
 module.exports = {
@@ -144,6 +143,32 @@ module.exports = {
 				return "unsupported";
 		}
 	},
+	tagFunction: function (node, config) {
+		let value = node.value;
+		let field = node.field;
+		switch (node.operator) {
+			case "or":
+				return `(${this.tagFunction(node.value[0], config)}) || (${this.tagFunction(node.value[1], config)})`;
+			case "and":
+				return `(${this.tagFunction(node.value[0], config)}) && (${this.tagFunction(node.value[1], config)})`;
+			case "not":
+				return `!(${this.tagFunction(node.value, config)})`
+			case "=":
+				return `(event['${config.getField(field)}'] == '${value}')`
+			case "!=":
+				return `(event['${config.getField(field)}'] != '${value}')`
+			case ">":
+				return `(event['${config.getField(field)}'] > ${value})`
+			case "<":
+				return `(event['${config.getField(field)}'] < ${value})`
+			case "all":
+				return `(${JSON.stringify(value)}.every(v => event['${config.getField(field)}'].includes(v)))`
+			case "any":
+				return `(${JSON.stringify(value)}.some(v => event['${config.getField(field)}'].includes(v)))`
+			default:
+				return "unsupported";
+		}
+	},
 	createSearchRequest: function (ast, orderby, config) {
 		// console.log("search", util.inspect(ast.where, false, 15));
 
@@ -176,5 +201,10 @@ module.exports = {
 			body: req
 		});
 		return result
+	},
+	createTagFunction: function (ast, config) {
+		let func = this.tagFunction(ast.where, config)
+		console.log(func)
+		return eval(`(event) => (${func}) ? ${JSON.stringify(ast.tags)} : undefined`)
 	}
 };

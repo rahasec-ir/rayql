@@ -5,9 +5,12 @@ literal                     \'(\\.|[^'\\]|\*)*\'
 
 \s+                   /* skip whitespace */
 [0-9]+("."[0-9]+)?\b    return 'NUMBER'
+"tag"                   return 'tag'
 "search"                return 'search'
+"where"                 return 'where'
 "match"                 return 'match'
 "sequence"              return 'sequence'
+"unordered"             return 'unordered'
 "and"                   return 'and'
 "or"                    return 'or'
 "any"                   return 'any'

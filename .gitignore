@@ -90,3 +90,5 @@ typings/
 ./q.json
 sample.js
 sample2.js
+
+dist
