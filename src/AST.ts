@@ -17,6 +17,7 @@ function getRealLiteral(value: string): Literal {
 export enum NodeType {
     Relation = "relation",
     Boolean = "boolean",
+    Operation = "operation",
     Object = "object",
     ObjectDefinition = "object",
     TimeWindow = "timeWindow",
@@ -28,10 +29,11 @@ export enum NodeType {
 }
 
 export type TimeUnit = "s" | "m" | "h" | "d";
-type Operator = "and" | "or" | "not" | "=" | ">" | "all" | "any";
+type Operator = "=" | "!=" | ">" | "<" | "all" | "any";
+type BooleanOperator = "and" | "or" | "not";
 type RelationDirection = "out" | "in" | "both";
 type Literal = string | number;
-type NodeValue = Literal | BooleanNode | Literal[];
+export type NodeValue = Literal | Literal[];
 
 interface TimeWindowNode extends Node {
     node: NodeType.TimeWindow;
@@ -43,12 +45,27 @@ export interface Node {
     node: NodeType;
 }
 
-interface BooleanNode extends Node {
+// export interface BooleanNode extends Node {
+//     node: NodeType.Boolean;
+//     field?: string;
+//     operator: Operator;
+//     value?: NodeValue;
+//     value2?: NodeValue;
+//     subNodes?: BooleanNode[]
+// }
+
+export interface BooleanNode extends Node {
     node: NodeType.Boolean;
-    field?: string;
+    operator: BooleanOperator;
+    subNodes: (BooleanNode | OperationNode)[]
+}
+
+export interface OperationNode extends Node {
+    node: NodeType.Operation;
+    field: string
     operator: Operator;
-    value: NodeValue;
-    value2?: NodeValue;
+    value: Literal[];
+
 }
 
 interface RelationNode extends Node {
@@ -106,7 +123,7 @@ export interface SequenceNode extends Node {
     steps: ObjectNode[],
 }
 
-export default class AST {
+export class AST {
     public static relation(type: string, direction: RelationDirection): RelationNode {
         return {
             node: NodeType.Relation,
@@ -143,23 +160,21 @@ export default class AST {
         return {
             node: NodeType.Boolean,
             operator: "and",
-            value: right,
-            value2: left,
+            subNodes: [right, left]
         };
     }
     public static or(right: BooleanNode, left: BooleanNode): BooleanNode {
         return {
             node: NodeType.Boolean,
             operator: "or",
-            value: right,
-            value2: left,
+            subNodes: [right, left]
         };
     }
     public static not(expr: BooleanNode): BooleanNode {
         return {
             node: NodeType.Boolean,
             operator: "not",
-            value: expr,
+            subNodes: [expr]
         };
     }
     public static tag(tags: string[], where: BooleanNode): ConditionalTagNode {
@@ -169,30 +184,30 @@ export default class AST {
             tags: tags.map((value) => getRealLiteral(value)),
         };
     }
-    public static all(field: string, values: string[]): BooleanNode {
+    public static all(field: string, values: string[]): OperationNode {
         // console.log('all', field, values)
         return {
-            node: NodeType.Boolean,
+            node: NodeType.Operation,
             field,
             operator: "all",
             value: values.map((value) => getRealLiteral(value)),
         };
     }
-    public static any(field: string, values: string[]): BooleanNode {
+    public static any(field: string, values: string[]): OperationNode {
         return {
-            node: NodeType.Boolean,
+            node: NodeType.Operation,
             field,
             operator: "any",
             value: values.map((value) => getRealLiteral(value)),
         };
     }
-    public static operation(field: string, operator: Operator, value: string): BooleanNode {
+    public static operation(field: string, operator: Operator, value: string): OperationNode {
         // console.log("simple", field, operator, value);
         return {
-            node: NodeType.Boolean,
+            node: NodeType.Operation,
             field,
             operator,
-            value: getRealLiteral(value),
+            value: [getRealLiteral(value)],
         };
     }
     public static search(
@@ -214,13 +229,15 @@ export default class AST {
             search.where = {
                 node: NodeType.Boolean,
                 operator: "and",
-                value: search.where,
-                value2: {
-                    node: NodeType.Boolean,
-                    field: "@timestamp",
-                    operator: ">",
-                    value: "now-" + timeWindow.number + timeWindow.unit,
-                },
+                subNodes: [
+                    search.where,
+                    {
+                        node: NodeType.Operation,
+                        field: "@timestamp",
+                        operator: ">",
+                        value: ["now-" + timeWindow.number + timeWindow.unit],
+                    }
+                ]
             };
         }
         

@@ -1,5 +1,5 @@
 %{
-var AST = require('./ast.js')
+var {AST} = require('./src/AST.js')
 
 %}
 

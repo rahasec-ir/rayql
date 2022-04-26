@@ -1,20 +1,22 @@
 import { Search } from "@elastic/elasticsearch/api/requestParams"
-import { Node, NodeType, TimeUnit } from "./AST"
+import { ConditionalTagNode, Node, NodeType, TimeUnit } from "./AST"
+import { JsBackend } from "./backend/JsBackend"
 let rayql = require('../rayql')
 
-type StringMap = {[key: string]: string}
-type TagFunction = (event: object) => string[]
+export type StringMap = {[key: string]: string}
+export type TagFunction = (event: object) => string[]
 type Filter = {}
 
 export class RayQuery {
     private savedSearches: StringMap
     private mappings: StringMap
+    private jsBackend: JsBackend
     // private queryText: string
 
     constructor(savedSearches: StringMap, mappings: StringMap) {
         this.savedSearches = savedSearches
         this.mappings = mappings
-        // this.queryText = query
+        this.jsBackend = new JsBackend(this.savedSearches, this.mappings)
     }
 
     public getAST(text: string): Node {
@@ -35,16 +37,16 @@ export class RayQuery {
 
     public getTagFunction(text: string): TagFunction {
         const ast = this.getAST(text)
-        if (ast.node !== NodeType.ConditionalTag) {
+        if (ast.node === NodeType.ConditionalTag) {
+            return this.jsBackend.tag(ast as ConditionalTagNode)
+        } else {
             throw new Error('query is not tag query')
         }
-        // convert esbackend
-        return undefined as unknown as TagFunction
     }
 }
 
 let q = new RayQuery({}, {})
-let ast = q.getAST(`
+let ast = q.getTagFunction(`
 tag ['t1120', 'recon']
 where [event_id = 1 and command_line any ['whoami', 'dir']]
 `)
