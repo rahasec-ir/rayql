@@ -37,19 +37,20 @@ export class JsBackend extends Backend<any, TagFunction, any> {
         } else if (node.node === NodeType.Operation) {
             let value = node.value;
             let field = node.field;
+            const val = value[0].constructor === Number ? value[0].toString() : `'${value[0]}'`
             switch (node.operator) {
                 case "=":
-                    return `(event['${this.getField(field)}'] == '${value}')`;
+                    return `(event['${this.getField(field)}'] == ${val})`;
                 case "!=":
-                    return `(event['${this.getField(field)}'] != '${value}')`;
+                    return `(event['${this.getField(field)}'] != ${val})`;
                 case ">":
-                    return `(event['${this.getField(field)}'] > ${value})`;
+                    return `(event['${this.getField(field)}'] > ${val})`;
                 case "<":
-                    return `(event['${this.getField(field)}'] < ${value})`;
+                    return `(event['${this.getField(field)}'] < ${val})`;
                 case "all":
-                    return `(${JSON.stringify(value)}.every(v => event['${this.getField(field)}'].includes(v)))`;
+                    return `(${JSON.stringify(value)}.every(v => event['${this.getField(field)}']?.includes(v)))`;
                 case "any":
-                    return `(${JSON.stringify(value)}.some(v => event['${this.getField(field)}'].includes(v)))`;
+                    return `(${JSON.stringify(value)}.some(v => event['${this.getField(field)}']?.includes(v)))`;
                 default:
                     return "unsupported";
             }

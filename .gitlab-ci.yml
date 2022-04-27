@@ -1,0 +1,43 @@
+stages:
+  - build
+  - test
+  - release
+
+build:
+  stage: build
+  image: node:14.17.0-buster
+  before_script:
+    - npm install
+    - npm install typescript@4.3.5 -g
+  script:
+    - tsc -p tsconfig.json
+  only:
+    - dev
+
+test:
+  stage: test
+  image: node:14.17.0-buster
+  before_script:
+    - npm install
+    - npm install typescript@4.3.5 -g
+    - tsc -p tsconfig.json
+  script:
+    - npm run test
+
+semantic-release:
+  stage: release
+  image: node:14.17.0-buster
+  variables:
+    NPM_USERNAME: $NPM_USERNAME
+    NPM_PASSWORD: $NPM_PASSWORD
+    NPM_EMAIL: $NPM_EMAIL
+    NPM_CONFIG_REGISTRY: $NPM_CONFIG_REGISTRY
+  before_script:
+    - npm install
+    - npm install typescript@4.3.5 -g
+    - npm install semantic-release -g
+  script:
+    - tsc -p tsconfig.json
+    - npx semantic-release 
+  only: 
+    - master

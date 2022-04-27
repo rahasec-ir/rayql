@@ -94,7 +94,7 @@ interface KeyValueNode extends Node {
     value: Literal;
 }
 
-interface AggregationNode extends Node {
+export interface AggregationNode extends Node {
     node: NodeType.Aggregation;
     type: string;
     field: string;
